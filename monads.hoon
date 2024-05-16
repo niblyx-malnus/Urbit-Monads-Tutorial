@@ -295,6 +295,22 @@
     ;<  z=@ud  run-with-logs  (add-one y)
     ;<  w=@ud  run-with-logs  (square z)
     (add-one w)
+  ::
+  ++  log
+    |*  [x=* =tape]
+    ^-  (noun-with-logs _x)
+    [x ~[tape]]
+  ::
+  ++  just-square   |=(x=@ud `@ud`(mul x x))
+  ++  just-add-one  |=(x=@ud `@ud`(add x 1))
+  ::
+  ++  micgal-log
+    |=  x=@ud
+    ^-  (noun-with-logs @ud)
+    ;<  y=@ud  run-with-logs  (log (just-square x) "Squaring...")
+    ;<  z=@ud  run-with-logs  (log (just-add-one y) "Adding one...")
+    ;<  w=@ud  run-with-logs  (log (just-square z) "Squaring again...")
+    (log (just-add-one w) "Adding one and ending.")
   --
 :: The list monad
 ::
