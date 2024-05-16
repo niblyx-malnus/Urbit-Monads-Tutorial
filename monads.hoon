@@ -296,4 +296,102 @@
     ;<  w=@ud  run-with-logs  (square z)
     (add-one w)
   --
+:: The list monad
+::
+++  ex8
+  |%
+  ::  flat-map
+  ::
+  ++  run
+    |*  =mold
+    |=  [input=(list mold) transform=$-(mold (list mold))]
+    ^-  (list mold)
+    ?~  input
+      ~
+    %+  weld
+      (transform i.input)
+    $(input t.input)
+  ::
+  ++  en-list
+    |=  x=@t
+    ^-  (list @t)
+    [x ~]
+  :: door example from video
+  ::
+  ++  en-door
+    |=  x=@t
+    ^-  (list @t)
+    :~  (rap 3 x ?~(x '' ' ') 'red' ~)
+        (rap 3 x ?~(x '' ' ') 'green' ~)
+        (rap 3 x ?~(x '' ' ') 'blue' ~)
+    ==
+  ++  en-coin
+    |=  x=@t
+    ^-  (list @t)
+    :~  (rap 3 x ?~(x '' ' ') 'heads' ~)
+        (rap 3 x ?~(x '' ' ') 'tails' ~)
+    ==
+  ::
+  ++  composed
+    |=  x=@t
+    ^-  (list @t)
+    =/  new=(list @t)  (en-list x)
+    =.  new            ((run @t) new en-coin)
+    =.  new            ((run @t) new en-door)
+    ((run @t) new en-coin)
+  ::
+  ++  micsig          ;~((run @t) en-coin en-door en-coin)
+  ++  micsig-on-list  (curr (run @t) micsig)
+  ::
+  ++  apply-en-door
+    |=  tan=$-(@t (list @t))
+    ^-  $-(@t (list @t))
+    |=  x=@t
+    ((run @t) (en-door x) tan)
+  ::
+  ++  apply-en-coin
+    |=  tan=$-(@t (list @t))
+    ^-  $-(@t (list @t))
+    |=  x=@t
+    ((run @t) (en-coin x) tan)
+  ::
+  ++  alternate
+    %-  apply-en-coin
+    %-  apply-en-door
+    en-coin
+  ::
+  ++  alternate-rewritten
+    |=  x=@t
+    ^-  (list @t)
+    %+  (run @t)
+      (en-coin x)
+    |=  x=@t
+    %+  (run @t)
+      (en-door x)
+    en-coin
+  ::
+  ++  micgal
+    |=  x=@t
+    ^-  (list @t)
+    ;<  y=@t  run  (en-coin x)
+    ;<  z=@t  run  (en-door y)
+    (en-coin z)
+  ::
+  ++  micgal-on-list  (curr (run @t) micgal)
+  ::
+  ++  micgal-2
+    |=  x=@t
+    ^-  (list @t)
+    ;<  y=@t    run  (en-coin x)
+    :: for each y, instead of using y
+    :: we re-use x; try it out to see the effect
+    ::
+    ;<  z=@t  run  (en-door x)
+    (en-coin z)
+  ::
+  ++  flat-map  run
+  ::
+  ++  ud-example
+    ((flat-map @ud) ~[0 1 2 3] |=(x=@ud (turn (gulf 0 x) (cury mul 2))))
+  --
 --
