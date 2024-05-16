@@ -148,7 +148,7 @@
       (square x)
     add-one
   :: This suggests the micgal pattern....
-  :: (since the micgal bind expects a "bind-builder" which accepts a mmold
+  :: (since the micgal bind expects a "bind-builder" which accepts a mold
   :: we just use _run-with-logs here since (_run-with-logs any-mold)
   :: will just give us back run-with-logs)
   ::
