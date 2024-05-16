@@ -5,6 +5,9 @@
 ::
 :: Urbit-native monadic patterns are woven in as they become accessible.
 ::
+:: Referring to https://docs.urbit.org/language/hoon/reference/rune/mic
+:: for ;~ and ;< will also be helpful.
+::
 |%
 :: Raw code
 ::
