@@ -488,7 +488,7 @@
     |=  x=@ud
     ^-  (each tape goof)
     ;<  y=@ud  (curr run tape)  (div-1000 x)
-    ;<  z=@ud  (curr run tape)  (sub-100 x)
+    ;<  z=@ud  (curr run tape)  (sub-100 y)
     ;<  =tape  (curr run tape)  (en-odd-tape z)
     [%& tape]
   --
