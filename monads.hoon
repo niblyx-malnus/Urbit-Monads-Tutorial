@@ -176,7 +176,6 @@
     ?~  t.tans  i.tans
     =/  rest=transform  $(tans t.tans)
     |=  x=@ud
-    =/  new=number-with-logs  (i.tans x)
     (run-with-logs (i.tans x) rest)
   ::
   ++  composed
