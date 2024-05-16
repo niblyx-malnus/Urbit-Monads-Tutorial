@@ -394,4 +394,102 @@
   ++  ud-example
     ((flat-map @ud) ~[0 1 2 3] |=(x=@ud (turn (gulf 0 x) (cury mul 2))))
   --
+:: The either monad
+::
+++  ex9
+  |%
+  ++  run
+    |*  [a=mold b=mold]
+    |=  [input=(each a goof) transform=$-(a (each b goof))]
+    ^-  (each b goof)
+    ?-  -.input
+      %|  input
+      %&  (transform p.input)
+    ==
+  ::
+  ++  en-each
+    |*  =mold
+    |=  a=mold
+    ^-  (each mold goof)
+    [%& a]
+  ::
+  ++  div-1000
+    |=  x=@ud
+    ^-  (each @ud goof)
+    ?:  =(0 x)
+      [%| %divide-by-zero ~]
+    [%& (div 1.000 x)]
+  ::
+  ++  sub-100
+    |=  x=@ud
+    ^-  (each @ud goof)
+    ?:  (lte x 100)
+      [%| %subtract-underflow ~]
+    [%& (sub x 100)]
+  ::
+  ++  en-odd-tape
+    |=  x=@ud
+    ^-  (each tape goof)
+    ?:  =(0 (mod x 2))
+      [%| %even-number ~]
+    [%& (scow %ud x)]
+  :: will only go all the way through for 3
+  ::
+  ++  composed
+    |=  x=@ud
+    ^-  (each tape goof)
+    =/  new=(each @ud goof)  ((en-each @ud) x)
+    =.  new                  ((run @ud @ud) new div-1000)
+    =.  new                  ((run @ud @ud) new sub-100)
+    ((run @ud tape) new en-odd-tape)
+  :: We can't only write a micsig since our bind function switches part way.
+  ::
+  ++  micsig
+    |=  x=@ud
+    ^-  (each tape goof)
+    %+  (run @ud tape)
+      (;~((run @ud @ud) div-1000 sub-100) x)
+    en-odd-tape
+  ::
+  ++  apply-div-1000
+    |*  =mold
+    |=  tan=$-(@ud (each mold goof))
+    |=  x=@ud
+    ((run @ud mold) (div-1000 x) tan)
+  ::
+  ++  apply-sub-100
+    |*  =mold
+    |=  tan=$-(@ud (each mold goof))
+    |=  x=@ud
+    ((run @ud mold) (sub-100 x) tan)
+  ::
+  ++  apply-en-odd-tape
+    |*  =mold
+    |=  tan=$-(tape (each mold goof))
+    |=  x=tape
+    ((run tape mold) (en-odd-tape x) tan)
+  ::
+  ++  alternate
+    %-  (apply-div-1000 tape)
+    %-  (apply-sub-100 tape)
+    en-odd-tape
+  ::
+  ++  alternate-rewritten
+    |=  x=@ud
+    ^-  (each tape goof)
+    %+  (run @ud tape)
+      (div-1000 x)
+    |=  x=@ud
+    %+  (run @ud tape)
+      (sub-100 x)
+    en-odd-tape
+  ::
+  ++  micgal
+    |=  x=@ud
+    ^-  (each tape goof)
+    ;<  y=@ud  (curr run tape)  (div-1000 x)
+    ;<  z=@ud  (curr run tape)  (sub-100 x)
+    ;<  =tape  (curr run tape)  (en-odd-tape z)
+    [%& tape]
+  --
 --
