@@ -400,8 +400,8 @@
   |%
   ++  run
     |*  [a=mold b=mold]
-    |=  [input=(each a goof) transform=$-(a (each b goof))]
-    ^-  (each b goof)
+    |=  [input=(each a tang) transform=$-(a (each b tang))]
+    ^-  (each b tang)
     ?-  -.input
       %|  input
       %&  (transform p.input)
@@ -410,35 +410,35 @@
   ++  en-each
     |*  =mold
     |=  a=mold
-    ^-  (each mold goof)
+    ^-  (each mold tang)
     [%& a]
   ::
   ++  div-1000
     |=  x=@ud
-    ^-  (each @ud goof)
+    ^-  (each @ud tang)
     ?:  =(0 x)
-      [%| %divide-by-zero ~]
+      [%| leaf+"divide-by-zero" ~]
     [%& (div 1.000 x)]
   ::
   ++  sub-100
     |=  x=@ud
-    ^-  (each @ud goof)
+    ^-  (each @ud tang)
     ?:  (lte x 100)
-      [%| %subtract-underflow ~]
+      [%| leaf+"subtract-underflow" ~]
     [%& (sub x 100)]
   ::
   ++  en-odd-tape
     |=  x=@ud
-    ^-  (each tape goof)
+    ^-  (each tape tang)
     ?:  =(0 (mod x 2))
-      [%| %even-number ~]
+      [%| leaf+"even-number" ~]
     [%& (scow %ud x)]
   :: will only go all the way through for 3
   ::
   ++  composed
     |=  x=@ud
-    ^-  (each tape goof)
-    =/  new=(each @ud goof)  ((en-each @ud) x)
+    ^-  (each tape tang)
+    =/  new=(each @ud tang)  ((en-each @ud) x)
     =.  new                  ((run @ud @ud) new div-1000)
     =.  new                  ((run @ud @ud) new sub-100)
     ((run @ud tape) new en-odd-tape)
@@ -446,26 +446,26 @@
   ::
   ++  micsig
     |=  x=@ud
-    ^-  (each tape goof)
+    ^-  (each tape tang)
     %+  (run @ud tape)
       (;~((run @ud @ud) div-1000 sub-100) x)
     en-odd-tape
   ::
   ++  apply-div-1000
     |*  =mold
-    |=  tan=$-(@ud (each mold goof))
+    |=  tan=$-(@ud (each mold tang))
     |=  x=@ud
     ((run @ud mold) (div-1000 x) tan)
   ::
   ++  apply-sub-100
     |*  =mold
-    |=  tan=$-(@ud (each mold goof))
+    |=  tan=$-(@ud (each mold tang))
     |=  x=@ud
     ((run @ud mold) (sub-100 x) tan)
   ::
   ++  apply-en-odd-tape
     |*  =mold
-    |=  tan=$-(tape (each mold goof))
+    |=  tan=$-(tape (each mold tang))
     |=  x=tape
     ((run tape mold) (en-odd-tape x) tan)
   ::
@@ -476,7 +476,7 @@
   ::
   ++  alternate-rewritten
     |=  x=@ud
-    ^-  (each tape goof)
+    ^-  (each tape tang)
     %+  (run @ud tape)
       (div-1000 x)
     |=  x=@ud
@@ -486,9 +486,17 @@
   ::
   ++  micgal
     |=  x=@ud
-    ^-  (each tape goof)
+    ^-  (each tape tang)
     ;<  y=@ud  (curr run tape)  (div-1000 x)
     ;<  z=@ud  (curr run tape)  (sub-100 y)
+    ;<  =tape  (curr run tape)  (en-odd-tape z)
+    [%& tape]
+  ::
+  ++  micgal-mule
+    |=  x=@ud
+    ^-  (each tape tang)
+    ;<  y=@ud  (curr run tape)  (mule |.((div 1.000 x)))
+    ;<  z=@ud  (curr run tape)  (mule |.((sub y 100)))
     ;<  =tape  (curr run tape)  (en-odd-tape z)
     [%& tape]
   --
