@@ -1,5 +1,5 @@
 :: This follows along with the following youtube video:
-:: https://youtu.be/C2w45qRc3aU?feature=shared
+:: https://youtu.be/C2w45qRc3aU
 :: "The Absolute Best Intro to Monads For Software Engineers"
 :: by Studying with Alex
 ::
