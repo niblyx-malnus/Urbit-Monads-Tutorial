@@ -516,4 +516,124 @@
     ;<  =tape  (curr run tape)  (en-odd-tape z)
     [%& tape]
   --
+::
+++  common-monads
+  |%
+  :: State monad
+  :: Pass along a piece of state that is being mutated
+  :: Not useful on urbit (use abet/abed engine core pattern etc.)
+  ::
+  ++  mutation
+    |*  [state=mold value=mold]
+    =<  form
+    |%
+    ++  raw-form
+      |$  [state value]
+      $-(state [state value])
+    ::
+    ++  form  (raw-form state value)
+    ::
+    ++  pure
+      |=  v=value
+      ^-  form
+      |=(s=state [s v])
+    ::
+    ++  bind
+      |*  x=mold
+      |=  $:  mutation-x=(raw-form state x)
+              transform=$-(x form)
+          ==
+      ^-  form
+      |=  old=state
+      ^-  [state value]
+      =/  [new=state val=x]  (mutation-x old)
+      ((transform val) new)
+    ::
+    ++  just-value
+      |=  [=state mutation=form]
+      ^-  value
+      (tail (mutation state))
+    ::
+    ++  just-state
+      |=  [=state mutation=form]
+      ^+  state
+      (head (mutation state))
+    --
+  :: Reader monad
+  :: Pass along a read-only piece of state
+  ::
+  ++  reader
+    |*  [env=mold val=mold]
+    =<  form
+    |%
+    ++  raw-form
+      |$  [env val]
+      $-(env val)
+    ::
+    ++  form  (raw-form env val)
+    ::
+    ++  pure
+      |=  v=val
+      ^-  (reader env val)
+      |=(e=env v)
+    ::
+    ++  bind
+      |*  x=mold
+      |=  [reader-x=(raw-form env x) transform=$-(x form)]
+      ^-  form :: (reader env val)
+      |=  =env
+      =/  val=x  (reader-x env)
+      ((transform val) env)
+    --
+  :: Writer monad ("wrap/run with logs")
+  ::
+  ++  writer
+    |*  [log=mold value=mold]
+    =<  form
+    |%
+    ++  raw-form
+      |$  [log value]
+      [logs=(list log) =value]
+    ++  form  (raw-form log value)
+    ++  pure  |=(v=value [~ v])
+    ++  bind
+      |*  x=mold
+      |=  [writer-x=(raw-form log x) transform=$-(x form)]
+      ^-  form :: (writer log value)
+      =/  new=form  (transform value.writer-x)
+      [(weld logs.writer-x logs.new) value.new]
+    --
+  :: Maybe monad (exception)
+  ::
+  ++  maybe
+    |*  value=mold
+    |%
+    ++  form  (unit value)
+    ++  pure  |=(v=value [~ v])
+    ++  bind
+      |*  x=mold
+      |=  [unit-x=(unit x) transform=$-(x form)]
+      ^-  form :: (unit value)
+      ?~  unit-x
+        ~
+      (transform u.unit-x)
+    --
+  :: List monad
+  ::
+  ++  branch
+    |*  item=mold
+    |%
+    ++  form   (list item)
+    ++  pure   |=(i=item [i ~])
+    ++  bind
+      |*  x=mold
+      |=  [list-x=(list x) transform=$-(x form)]
+      ^-  form :: (list item)
+      ?~  list-x
+        ~
+      %+  weld
+        (transform i.list-x)
+      $(list-x t.list-x)
+    --
+  --
 --
