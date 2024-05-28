@@ -635,5 +635,19 @@
         (transform i.list-x)
       $(list-x t.list-x)
     --
+  :: Parser monad
+  ::
+  ++  parser
+    |%
+    ++  form  rule
+    ++  pure  easy
+    ++  bind
+      |*  =mold
+      |*  [sef=rule gat=$-(mold rule)]
+      |=  tub=nail
+      =/  vex  (sef tub)
+      ?~  q.vex  vex
+      ((gat p.u.q.vex) q.u.q.vex)
+    --
   --
 --
