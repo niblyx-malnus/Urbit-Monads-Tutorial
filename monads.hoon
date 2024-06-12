@@ -635,7 +635,7 @@
         (transform i.list-x)
       $(list-x t.list-x)
     --
-  :: Parser monad
+  :: Parser monad (courtesy of ~racfer-hattes and ~dozreg-toplud)
   ::
   ++  parser
     |%
